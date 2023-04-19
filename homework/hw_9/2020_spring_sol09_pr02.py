@@ -10,7 +10,7 @@ for m in range(1, num_moments+1): ## goes from the 1st the nth moment.
     if rank == 0: ##initialize range
         n = 16    ## size n 
         X_range = np.linspace(0, 1000,n*1000)  ## 1 interval between 1 and 1000 of length 16,000
-        X_range= X_range.reshape(16,-1) ## the interval subdivided into 16 intervals of length 1,000
+        X_range= X_range.reshape(n,-1) ## the interval subdivided into 16 intervals of length 1,000
     else: 
         X_range=None ## initialize buffer for non-zero rank workers 
     chunk_range = comm.scatter(X_range, root=0) ## scatter the range to all the workers
@@ -19,3 +19,5 @@ for m in range(1, num_moments+1): ## goes from the 1st the nth moment.
     comm.Reduce(chunk_int,m_moment,op= MPI.SUM,root= 0) ## sum all integrals to get a total integral over the range (ie the moment )
     if rank == 0: ## terminal case 
         print('moment',m ,"=", m_moment[0]) ## output result
+## note that we also could have just initialized our buffer as a np array of length num_moments, and added each moment to the ith index
+## but we were only told to calculate and output the moments not save them, so this seemed to serve

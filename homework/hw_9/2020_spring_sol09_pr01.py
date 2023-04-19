@@ -4,8 +4,7 @@ from mpi4py import MPI
 import numpy as np
 
 comm = MPI.COMM_WORLD ## initialize communicator
-size = comm.Get_size()
-rank = comm.Get_rank() 
+rank = comm.Get_rank() ## get the rank of each worker. 
 X_stats = np.zeros((2)) ## buffer to hold mean and std of our sample
 if rank == 0: ## calculate points
     n = 256000    ## size n 
@@ -23,5 +22,5 @@ chunk_stats = np.array([np.mean(chunk_x), np.std(chunk_x)]) ## find summary stat
 comm.Reduce(chunk_stats, X_stats, MPI.SUM, 0) ## reduce the chunk stats with addition 
 X_stats = X_stats/16 ## divide the chunk stats by the number of workers to get the true mean 
 if rank == 0: ## terminal case 
-    print('final X stats =',X_stats) ## output result
+    print('final stats of X:\nMean of X = {0}\nStandard Deviation of X = {1}'.format(X_stats[0],X_stats[1])) ## output result
 #    print('true x stats =', X_stats_true)
